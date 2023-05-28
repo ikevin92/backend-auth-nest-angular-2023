@@ -8,6 +8,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateAuthDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { Model } from 'mongoose';
+import * as bcryptjs from 'bcryptjs';
 
 @Injectable()
 export class AuthService {
@@ -15,12 +16,19 @@ export class AuthService {
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     try {
-      const newUser = new this.userModel(createUserDto);
+      const { password, ...userData } = createUserDto;
 
-      // 1. Encriptar contraseña
-      // 2. Guardar Usuario
+      const newUser = new this.userModel({
+        password: bcryptjs.hashSync(password, 10), //*encriptando pass
+        ...userData,
+      });
+
+      await newUser.save();
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { password: _, ...user } = newUser.toJSON();
+
       // 3. Generar el JWT
-      return await newUser.save();
+      return user;
     } catch (error) {
       console.log({ error });
       if (error.code === 11000) {
