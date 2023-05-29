@@ -1,19 +1,16 @@
 import {
+  Body,
   Controller,
   Get,
   Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  UseGuards,
   Request,
+  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 
-import { CreateUserDto, UpdateAuthDto, LoginDto, RegisterUserDto } from './dto';
-import { AuthGuard } from './guards/auth.guard';
+import { CreateUserDto, LoginDto, RegisterUserDto } from './dto';
 import { User } from './entities/user.entity';
+import { AuthGuard } from './guards/auth.guard';
 import { LoginResponse } from './interfaces/login-response';
 
 @Controller('auth')
