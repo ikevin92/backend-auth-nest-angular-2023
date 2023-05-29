@@ -5,15 +5,14 @@ import {
   InternalServerErrorException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateAuthDto } from './dto/update-user.dto';
-import { User } from './entities/user.entity';
-import { Model } from 'mongoose';
-import * as bcryptjs from 'bcryptjs';
-import { LoginDto } from './dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
+import { InjectModel } from '@nestjs/mongoose';
+import * as bcryptjs from 'bcryptjs';
+import { Model } from 'mongoose';
+import { User } from './entities/user.entity';
+import { LoginResponse } from './interfaces/login-response';
 import { JwtPayload } from './interfaces/payload-jwt';
+import { CreateUserDto, LoginDto, RegisterUserDto, UpdateAuthDto } from './dto';
 
 @Injectable()
 export class AuthService {
@@ -45,7 +44,16 @@ export class AuthService {
     }
   }
 
-  async login(loginDto: LoginDto) {
+  async register(registerUserDto: RegisterUserDto): Promise<LoginResponse> {
+    const user = await this.create(registerUserDto);
+
+    return {
+      user: user,
+      token: await this.getJwtToken({ id: user._id }),
+    };
+  }
+
+  async login(loginDto: LoginDto): Promise<LoginResponse> {
     console.log({ loginDto });
     const { email, password } = loginDto;
 
