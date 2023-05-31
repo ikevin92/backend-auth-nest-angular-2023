@@ -35,7 +35,6 @@ export class AuthController {
   @UseGuards(AuthGuard)
   @Get()
   findAll(@Request() request: Request) {
-    console.log({ request });
     return this.authService.findAll();
   }
 
